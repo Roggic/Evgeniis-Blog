@@ -14,7 +14,7 @@ from functools import wraps
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ["flask_key"]
+app.config['SECRET_KEY'] = os.environ.get("flask_key")
 ckeditor = CKEditor(app)
 Bootstrap(app)
 gravatar = Gravatar(app,
@@ -28,7 +28,7 @@ gravatar = Gravatar(app,
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -92,7 +92,7 @@ class Comment(db.Model, Base):
 db.create_all()
 
 
-@app.route('/')
+@app.route('/', methods=["GET"])
 def get_all_posts():
     posts = BlogPost.query.all()
     return render_template("index.html", all_posts=posts)
